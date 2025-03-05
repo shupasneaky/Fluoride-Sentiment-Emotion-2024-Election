@@ -90,8 +90,7 @@ save_location = r"C:/Users/owvis/OneDrive - University of Florida/Fluoride_Xdata
 no_of_tweets = 50  # Set desired number of tweets to fetch (minimum 10, maximum 180)
 start_time = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=7)  # Start 6 days ago
 time_window_minutes = 60  # Width of the time frame in minutes
-keywords = ["water fluoridation", "fluoridation", "fluoridated", "fluoridated water",
-            "fluoride", "fluoride water", "fluoridation of water"]
+keywords = ["fluoridation", "fluoridated", "fluoride"]
 query = f"({' OR '.join(keywords)}) lang:en -is:retweet -is:quote -has:links -has:media -has:images -has:video_link"  # Query string with language filter and excluding retweets
 
 # Run the periodic fetcher with manually set start time and specified window
