@@ -1,7 +1,7 @@
 import pandas as pd
 
 """
-03_time_splitting.py
+02_time_splitting.py
 
 This script adds a 'Time_Label' column to 'common_users_tweets.csv' 
 and 'fluoride_tweets.csv', marking tweets as 'before' or 'after' 
