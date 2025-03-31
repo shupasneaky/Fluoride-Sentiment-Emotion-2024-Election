@@ -12,8 +12,6 @@ This script cleans tweet text by:
 2. Expanding abbreviations (e.g., "wym" → "what do you mean")
 3. Removing unnecessary punctuation
 4. Removing URLs and mentions → 'Text_nolink'
-5. Removing emojis and converting to lowercase → 'Text_Clean'
-6. Lemmatizing 'Text_Clean' → 'Text_Lemm'
 Processed columns are appended to the original CSV files.
 """
 
@@ -51,22 +49,6 @@ def remove_urls_mentions(text):
     return text.strip()
 
 
-# Function to clean text: expand contractions, expand abbreviations, remove punctuation, remove emojis, and convert to lowercase
-def clean_text(text):
-    text = expand_contractions(text)  # Expand contractions
-    text = expand_abbreviations(text)  # Expand abbreviations
-    text = remove_punctuation(text)  # Remove punctuation before URL/mention removal
-    text = emoji.replace_emoji(text, replace="")  # Remove emojis
-    return text.lower().strip()  # Convert to lowercase without removing punctuation
-
-
-# Function to lemmatize text
-def lemmatize_text(text):
-    doc = nlp(text)
-    lemmatized_words = [token.lemma_ for token in doc]  # Apply lemmatization
-    return " ".join(lemmatized_words)
-
-
 # Define file paths
 fluoride_file = data_folder + "fluoride_tweets.csv"
 user_file = data_folder + "user_tweets.csv"
@@ -82,8 +64,6 @@ def process_file(file_path):
         return
 
     df["Text_nolink"] = df["Text"].astype(str).apply(remove_urls_mentions)
-    df["Text_Clean"] = df["Text_nolink"].apply(clean_text)
-    df["Text_Lemm"] = df["Text_Clean"].apply(lemmatize_text)
 
     df.to_csv(file_path, index=False, encoding="utf-8")
     print(f"Processed and saved: {file_path}")
