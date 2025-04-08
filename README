@@ -4,8 +4,8 @@ The PullTweets file has all the code used to pull the posts from X.com using the
 
 The Preprocessing file contains all code used to clean text and organize posts. 
 
-The SentimentEmotionAnalysis file contains all code used to call GPT-4o to classify sentiment, emotion, and topic. The prompt is included in this file as a standalone as well as in the code
+The SentimentEmotionAnalysis file contains all code used to call GPT-4o to classify sentiment, emotion, and topic. The prompt is included in this file as a standalone as well as in the code. The R files within were used to conduct statistical tests (EmotionStats.R and TopicandSentimentStats.R) as well as clean the results from the GPT-4o response (FixResults.R).
 
-The LDABERTModelerDIDNOTUSE file contains code that was ultimately scrapped for the GPT-4o classification. It did not perform as intended and may not function as some structures may have changed when swapping to the GPT-4o classification. The coding structure remains the same and can be seen for the models used. The results from these models is available in the supplementary materials folder. 
+The LDABERTModelerDIDNOTUSE file contains code that was ultimately scrapped for the GPT-4o classification. It did not perform as intended and may not function as some structures may have changed when swapping to the GPT-4o classification. The coding structure remains the same and can be seen for the models used. The results from these models is available in the data folder. 
 
-The Supplementary materials folder contains the data at all stages of the code. 
+The data folder contains the data at all stages of the code. The csv's labeled 'roberta' contain the information from the roberta output. the 'pull' csv files contain the raw pull from x.com. the 'gpt_first' files contain the first pull results from GPT-4o. the 'fluoride_post' and 'general_post' contain the file results from the last run of GPT-4o.
