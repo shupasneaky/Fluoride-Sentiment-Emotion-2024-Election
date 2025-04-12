@@ -18,41 +18,92 @@ fluoride_posts <- read.csv("fluoride_posts.csv", header = TRUE)[,-1] %>% mutate(
 combined_posts <- bind_rows(general_posts, fluoride_posts) 
 
 
-
+############################################################
+############         Pie Plot for Topics          ##########
+############################################################
 user_that_spoke_about_fluoride <- combined_posts %>%
   mutate(Includes_Fluoride = grepl(paste0("\\bFluoride\\b"), combined_posts$Topic)) %>%
   filter(Includes_Fluoride == TRUE) %>%
   select(Author.ID) %>%
   distinct()
-
 topics_from_users_that_posted_about_fluoride <- combined_posts %>%
   filter(Author.ID %in% user_that_spoke_about_fluoride$Author.ID) %>%
   separate_longer_delim(Topic, ",") %>%
   filter(Topic != "Fluoride") %>%
   select(Author.ID, Topic) %>%
   distinct() 
-
 pie_table <- as.data.frame(table(topics_from_users_that_posted_about_fluoride$Topic)) %>%
   mutate(Topic = Var1) %>%
   select(Freq, Topic) %>%
   arrange(desc(Freq)) %>%
   mutate(
     Percent = Freq / sum(Freq) * 100,
-    Label = paste0(Topic, " (", round(Percent, 1), "%)")
+    Label = paste0(Topic, " (n=", Freq, ", ", round(Percent, 1), "%)")
   )
-
 pie_table$Label <- factor(pie_table$Label, levels = pie_table$Label)
-
 pie_plot <- ggplot(pie_table, aes(x = 2, y = Freq, fill = Label)) +
   geom_bar(stat = "identity", width = 1, color = "black", size = 0.5) +
   coord_polar(theta = "y") +
   xlim(0.5, 2.5) + 
   theme_void() +
   ggtitle("Topics Discussed by Users that Posted About Fluoride") +
-  guides(fill = guide_legend(ncol = 1))
-
+  guides(fill = guide_legend(ncol = 1, title = "Topics")) + # add title for legend
+  theme(
+    legend.title = element_text(size = 16),
+    legend.text = element_text(size = 13),
+    plot.title = element_text(size = 18, face = "bold")
+  )
 pie_plot
-ggsave("User That Poster About Fluoride Other Topics Pie_Chart.jpg", pie_plot, width = 8, height = 8, dpi = 300)
+ggsave("User That Poster About Fluoride Other Topics Pie_Chart.jpg", pie_plot, width = 9, height = 9, dpi = 300)
+
+
+############################################################
+############        Post Level Statistics         ##########
+############################################################
+
+fluoride_posts_sent <- combined_posts %>%
+  mutate(Topic = trimws(Topic)) %>%
+  mutate(Fluoride_Label = ifelse(grepl("\\bFluoride\\b", Topic), "Fluoride", "Non-Fluoride")) %>%
+  select(Sentiment, Fluoride_Label) %>%
+  table()
+
+# Fisher's Exact Test (simulated p-value)
+fisher_result <- fisher.test(fluoride_posts_sent, simulate.p.value = TRUE, B = 10000)
+
+test_results <- list(
+  Table = fluoride_posts_sent,
+  P_Value = fisher_result$p.value
+)
+
+print(fluoride_posts_sent)
+
+fluoride_posts_negative <- combined_posts %>%
+  mutate(Topic = trimws(Topic)) %>%
+  mutate(Fluoride_Label = ifelse(grepl("\\bFluoride\\b", Topic), "Fluoride", "Non-Fluoride")) %>%
+  select(Sentiment, Fluoride_Label, Topic) %>%
+  filter(Sentiment == "Negative", Fluoride_Label == "Fluoride") %>%
+  separate_longer_delim(Topic, ",") %>%
+  filter(Topic != "Fluoride") %>%
+  count(Topic)
+
+fluoride_posts_neutral <- combined_posts %>%
+  mutate(Topic = trimws(Topic)) %>%
+  mutate(Fluoride_Label = ifelse(grepl("\\bFluoride\\b", Topic), "Fluoride", "Non-Fluoride")) %>%
+  select(Sentiment, Fluoride_Label, Topic) %>%
+  filter(Sentiment == "Neutral", Fluoride_Label == "Fluoride") %>%
+  separate_longer_delim(Topic, ",") %>%
+  filter(Topic != "Fluoride") %>%
+  count(Topic)
+
+fluoride_posts_positive <- combined_posts %>%
+  mutate(Topic = trimws(Topic)) %>%
+  mutate(Fluoride_Label = ifelse(grepl("\\bFluoride\\b", Topic), "Fluoride", "Non-Fluoride")) %>%
+  select(Sentiment, Fluoride_Label, Topic) %>%
+  filter(Sentiment == "Positive", Fluoride_Label == "Fluoride") %>%
+  separate_longer_delim(Topic, ",") %>%
+  filter(Topic != "Fluoride") %>%
+  count(Topic)
+
 
 ############################################################
 ############        User Level Statistics         ##########
@@ -71,7 +122,6 @@ user_avg_sentiment <- combined_posts %>%
     Avg_Sentiment > 0.5 ~ "Positive", 
     TRUE ~ "Neutral"
   )) %>% select(Author.ID, Topic, Sentiment)
-
 
 # Get all topics in data
 topic_vec <- combined_posts %>%
