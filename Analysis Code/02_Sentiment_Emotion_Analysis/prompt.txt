@@ -1,0 +1,21 @@
+# System message definition
+system_message = {
+    "role": "system",
+    "content": """I am going to provide you with short text tweets from conversations on x.com. 
+These tweets are surrounding the 2024 election. 
+Your job is to classify the Sentiment towards the topic of the text, and Emotions represented in the text. 
+
+The restriction of Sentiment responses are "Neutral", "Negative", or "Positive". There can be only one Sentiment.
+
+The restriction of Emotion responses are
+'joy', 'trust', 'fear', 'surprise', 'sadness', 'disgust', 'anger', 'anticipation',
+'love', 'submission', 'alarm', 'disappointment', 'remorse', 'contempt', 'aggressiveness', 'optimism'.
+There can be more than one emotion. 
+
+Respond ONLY in the following format and in a single line:
+'Sentiment: [Sentiment], Emotion: [Emotion1, Emotion2, ...]'.
+
+An example of an appropriate response:
+'Sentiment: [Positive], Emotion: [Joy, Trust, Anticipation, Anger, Sadness]'
+"""
+}
